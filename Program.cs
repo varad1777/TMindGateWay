@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -13,36 +12,19 @@ builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange
 // Add Ocelot
 builder.Services.AddOcelot(builder.Configuration);
 
-//// Add JWT Auth
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-//    .AddJwtBearer(options =>
-//    {
+// --- CORS: allow frontend on localhost:3000 (with credentials/cookies) ---
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost3000", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // required if you send cookies (access_token) from the browser
+    });
+});
 
-//        options.RequireHttpsMetadata = true;
-
-//        // Extract token from cookie
-//        options.Events = new JwtBearerEvents
-//        {
-//            OnMessageReceived = context =>
-//            {
-//                if (context.Request.Cookies.ContainsKey("access_token"))
-//                {
-//                    context.Token = context.Request.Cookies["access_token"];
-//                    Console.WriteLine("Token received: " + context.Token);
-//                }
-//                return Task.CompletedTask;
-//            },
-//            OnAuthenticationFailed = context =>
-//            {
-//                Console.WriteLine("Authentication failed: " + context.Exception.Message);
-//                return Task.CompletedTask;
-//            }
-//        };
-
-
-//    });
-
-
+// Add Authentication (JWT)
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -73,8 +55,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
-
-
 
 // Add Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -112,6 +92,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+
+// Use CORS before auth/ocelot, but after routing (for endpoint routing)
+app.UseCors("AllowLocalhost3000");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
