@@ -95,7 +95,7 @@ app.UseRouting();
 
 // Use CORS before auth/ocelot, but after routing (for endpoint routing)
 app.UseCors("AllowLocalhost3000");
-
+app.UseWebSockets();
 app.UseAuthentication();
 app.UseAuthorization();
 
