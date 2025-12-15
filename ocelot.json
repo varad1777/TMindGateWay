@@ -33,3 +33,43 @@
     "RequestIdKey": "X-Request-ID"
   }
 }
+
+//{
+//    "Routes": [
+//        {
+//            "DownstreamPathTemplate": "/api/{everything}",
+//            "DownstreamScheme": "https",
+//            "DownstreamHostAndPorts": [
+//                {
+//                    "Host": "localhost",
+//                    "Port": 7034
+//                }
+//            ],
+//            "UpstreamPathTemplate": "/devices/{everything}",
+//            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+//            "AuthenticationOptions": {
+//                "AuthenticationProviderKey": "Bearer",
+//                "AllowedScopes": []
+//            }
+//        },
+//        {
+//            "DownstreamPathTemplate": "/api/{everything}",
+//            "DownstreamScheme": "https",
+//            "DownstreamHostAndPorts": [
+//                {
+//                    "Host": "localhost",
+//                    "Port": 7023
+//                }
+//            ],
+//            "UpstreamPathTemplate": "/auth/{everything}",
+//            "UpstreamHttpMethod": [ "GET", "POST" ],
+//            "AuthenticationOptions": {
+//                "AuthenticationProviderKey": "",
+//                "AllowedScopes": []
+//            }
+//        }
+//    ],
+//    "GlobalConfiguration": {
+//        "RequestIdKey": "X-Request-ID"
+//    }
+//}
