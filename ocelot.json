@@ -1,99 +1,45 @@
 ﻿{
   "Routes": [
     {
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": ["POST","GET"],
       "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7034
-        }
-      ],
-      "UpstreamPathTemplate": "/devices/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "auth-service", "Port": 5001 }],
+      "DownstreamHeaderTransform": { "Cookie": "{Headers.Cookie}" },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "Limit": 3,
+        "ClientIdHeader": "X-Forwarded-For",
+        "QuotaExceededMessage": "Too many login attempts. Try again later!",
+        "ClientWhitelist": []
       }
     },
     {
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7023
-        }
-      ],
-      "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7208
-        }
-      ],
-      "UpstreamPathTemplate": "/asset/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ]
-    },
-    {
+      "UpstreamPathTemplate": "/api/asset/{everything}",
+      "UpstreamHttpMethod": ["GET","POST","PUT","DELETE"],
       "DownstreamPathTemplate": "/api/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 4000
-        }
-      ],
-      "UpstreamPathTemplate": "/ai/{everything}",
-      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH" ]
+      "DownstreamHostAndPorts": [{ "Host": "asset-service", "Port": 5003 }],
+      "DownstreamHeaderTransform": { "Cookie": "{Headers.Cookie}" },
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "Limit": 80,
+        "ClientIdHeader": "Authorization",
+        "QuotaExceededMessage": "Too many requests. Try again later!",
+        "ClientWhitelist": []
+      }
     }
   ],
   "GlobalConfiguration": {
-    "RequestIdKey": "X-Request-ID"
+    "RequestIdKey": "X-Request-ID",
+    "RateLimitOptions": {
+      "ClientIdHeader": "Authorization",
+      "QuotaExceededMessage": "Too many requests. Try again later!",
+      "StatusCode": 429,
+      "DisableRateLimitHeaders": false
+    }
   }
 }
-
-//{
-//    "Routes": [
-//        {
-//            "DownstreamPathTemplate": "/api/{everything}",
-//            "DownstreamScheme": "https",
-//            "DownstreamHostAndPorts": [
-//                {
-//                    "Host": "localhost",
-//                    "Port": 7034
-//                }
-//            ],
-//            "UpstreamPathTemplate": "/devices/{everything}",
-//            "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
-//            "AuthenticationOptions": {
-//                "AuthenticationProviderKey": "Bearer",
-//                "AllowedScopes": []
-//            }
-//        },
-//        {
-//            "DownstreamPathTemplate": "/api/{everything}",
-//            "DownstreamScheme": "https",
-//            "DownstreamHostAndPorts": [
-//                {
-//                    "Host": "localhost",
-//                    "Port": 7023
-//                }
-//            ],
-//            "UpstreamPathTemplate": "/auth/{everything}",
-//            "UpstreamHttpMethod": [ "GET", "POST" ],
-//            "AuthenticationOptions": {
-//                "AuthenticationProviderKey": "",
-//                "AllowedScopes": []
-//            }
-//        }
-//    ],
-//    "GlobalConfiguration": {
-//        "RequestIdKey": "X-Request-ID"
-//    }
-//}
